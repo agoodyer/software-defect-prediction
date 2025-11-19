@@ -17,6 +17,10 @@
 \usepackage{microtype}
 \usepackage{inconsolata}
 \usepackage{graphicx}
+\usepackage{booktabs} 
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{float}
 
 % If the title and author information does not fit in the area allocated, uncomment the following
 %
@@ -108,7 +112,51 @@ You should write about your dataset here, following the guidelines regarding ite
 
 \section{Features}
 
-Describe any features you used for your model, or how your data was input to your model. Are you doing feature engineering or feature selection? Are you learning embeddings? Is it all part of one neural network? Refer to item 2. This may range from 0.25 pages to 0.5 pages.
+The NASA Promise dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+
+We can formulate the model as a binary classification problem of the form: 
+
+\begin{itemize}
+  \item \textbf{Input Feature (x):} The 21 static code metrics.
+  \item \textbf{Label (y):} Binary Defect / No-Defect Label.
+\end{itemize}
+
+See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metrics. 
+
+
+\begin{table}[htbp]
+    \centering
+    \footnotesize 
+    \begin{tabularx}{\columnwidth}{@{} l X @{}}
+        \toprule
+        \textbf{Metric} & \textbf{Description} \\
+        \midrule
+        1. loc (v) & Line count of code \\
+        2. v (g) & Cyclomatic complexity \\
+        3. ev (g) & Essential complexity \\
+        4. iv (g) & Design complexity \\
+        5. loCode & Line count \\
+        6. loComment & Count of lines of comments \\
+        7. loBlank & Count of blank lines \\
+        8. loCodeAndComment & Count of code and comment lines \\
+        9. uniq\_Op & Unique operators \\
+        10. uniq\_Opnd & Unique operands \\
+        11. total\_Op & Total operators \\
+        12. total\_Opnd & Total operands \\
+        13. branchCount & Branch count of the flow graphs \\
+        14. n & Total operators + operands \\
+        15. v & Volume \\
+        16. l & Program length \\
+        17. d & Difficulty \\
+        18. i & Intelligence \\
+        19. e & Effort \\
+        20. b & Estimate of the effort \\
+        21. t & Time estimator \\
+        22. Defect & True/False \\
+        \bottomrule
+    \end{tabularx}
+        \caption{The summary of code metrics\label{tab:metrics}}
+\end{table}
 
 \section{Implementation}
 
