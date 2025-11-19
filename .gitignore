@@ -1,0 +1,22 @@
+# LaTeX Compilation Files
+*.aux
+*.bbl
+*.blg
+*.fls
+*.log
+*.out
+*.lof
+*.lot
+*.toc
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.ps
+*.synctex.gz
+*.fdb_latexmk
+
+# Specific Project Files
+main 2.synctex
+main.pdf
+acl_natbib.bst

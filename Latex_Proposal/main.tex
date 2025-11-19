@@ -75,7 +75,28 @@
 
 \section{Introduction}
 
-Here, write a brief introduction to the problem you are solving. This can be adapted from your problem description and motivation from the original proposal. This should be around 0.25-0.5 pages.
+
+In Software Engineering, static code metrics are often used as targets to define a 'quality' gate for a given module or piece of code.  
+However, investing time into ensuring these metrics are met is painstaking, and many seem to be poor measures of the module's correctness. 
+
+\noindent A well-known critique of metric-driven evaluation comes from economist Charles Goodhart, whose law states that: 
+
+\begin{quote}
+"When a measure becomes a target, it ceases to be a good measure". 
+\end{quote}
+
+  \noindent We seek to investigate the legitimacy of this statement as it pertains to static code metrics. Rather than aiming to create the best possible classifier for software defects, we instead aim to answer the question:
+
+\begin{quote}
+  "Which static software metrics \textit{actually} matter"?
+\end{quote}
+
+
+  \noindent To investigate this question, we adopt an approach centered on feature selection and model interpretability. 
+  Specifically, we employ logistic regression in conjunction with L1 regularization to favour sparsity in the learned parameter, allowing us to derive an understanding of which metrics contribute meaningfully to defect prediction. 
+  By favouring an interpretable sparse model, we aim to provide analytical insight into the value of these metrics.
+
+
 
 \section{Related Work}
 
