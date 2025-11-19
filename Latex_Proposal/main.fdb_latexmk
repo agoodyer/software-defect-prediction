@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex main"] 1762905610.56883 "main.aux" "main.bbl" "main" 1763567915.2718 0
-  "./acl_natbib.bst" 1763567584.73181 45186 3d1af46d62cc9172ef6e42b56c1cd613 ""
-  "./custom.bib" 1763567584.7324 2071 0b966569afb5acbb6dca5a75fec7e92c ""
-  "main.aux" 1763567915.02939 3182 c4612ccbcc9fb5fd436c9c24622bbcc2 "pdflatex"
+["bibtex main"] 1763574689.9375 "main.aux" "main.bbl" "main" 1763574884.9366 0
+  "./acl_natbib.bst" 1763568551.32625 45186 3d1af46d62cc9172ef6e42b56c1cd613 ""
+  "./custom.bib" 1763573177.4082 4013 9129076e57a2161e02ac8ec1ef77175f ""
+  "main.aux" 1763574884.69831 3465 3259ff6f94bf547dbe9d91e2cbd19e61 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1763567914.41965 "/Users/mason/4ML3/Bonus Project/Latex_Proposal/main.tex" "main.pdf" "main" 1763567915.27194 0
-  "/Users/mason/4ML3/Bonus Project/Latex_Proposal/main.tex" 1763567914.16988 7554 71bd06e14ac5ebe979f7acbb7a1b9687 ""
+["pdflatex"] 1763574884.09905 "/Users/mason/4ML3/Bonus Project/Latex_Proposal/main.tex" "main.pdf" "main" 1763574884.93674 0
+  "/Users/mason/4ML3/Bonus Project/Latex_Proposal/main.tex" 1763574883.87733 8819 0c536fbcfe820cae42c9d0ebcdf90e46 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc" 1558214095 7631 5169ff1acd97ff1c4ab83563c99f96f4 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -123,11 +123,11 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1719585347.59047 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1719585339 8221420 99d1facbce7772d6996a138329158f22 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "acl.sty" 1763567584.73137 11615 e2c027f483aa40e577ed34264c8b0655 ""
-  "main.aux" 1763567915.02939 3182 c4612ccbcc9fb5fd436c9c24622bbcc2 "pdflatex"
-  "main.bbl" 1763567584.73429 1079 1a230e61c3e4bb028ebc24c2623c5c31 "bibtex main"
-  "main.out" 1763567915.02985 1364 34dec0e26ed0d2bc1a332fda77e8d570 "pdflatex"
-  "main.tex" 1763567914.16988 7554 71bd06e14ac5ebe979f7acbb7a1b9687 ""
+  "acl.sty" 1763568551.32575 11615 e2c027f483aa40e577ed34264c8b0655 ""
+  "main.aux" 1763574884.69831 3465 3259ff6f94bf547dbe9d91e2cbd19e61 "pdflatex"
+  "main.bbl" 1763574690.0414 1663 a0de2ab2c147c329bac8a73706d3de00 "bibtex main"
+  "main.out" 1763574884.69897 1364 34dec0e26ed0d2bc1a332fda77e8d570 "pdflatex"
+  "main.tex" 1763574883.87733 8819 0c536fbcfe820cae42c9d0ebcdf90e46 ""
   (generated)
   "main.aux"
   "main.log"

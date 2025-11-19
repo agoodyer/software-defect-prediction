@@ -75,11 +75,17 @@
 
 \section{Introduction}
 
-Here, write a brief introduction to the problem you are solving. This can be adapted from your problem description and motivation from the original proposal. This should be around 0.25-0.5 pages.
+In software engineering static code metrics are used as a measure of 'quality' for a piece of code; think cyclomatic complexity, branch count, etc. 
+However, investing time into hitting these metrics can be painstaking, and many of these metrics can feel like poor indicators of software correctness. 
+Instead of trying have all these metrics hit a certain goal, why not use them as features for a binary classifier with labels contain whether or not the code has a defect. 
+From here, instead of trying to look for the best possible classifier for the dataset, we can look for the static code metrics that actually matter. 
+Through the application of L1 regularization, to favour sparsity, on a logistic regression classifier we hope to find which software metrics are the largest indicators of code defects.
 
 \section{Related Work}
 
-Here, talk about the related work you encountered for your approach. Cite at least 5 references. Refer to item 2. No one has done exactly your task? Write about the most similar thing you can find. This should be around 0.25-0.5 pages.
+We are looking at two articles of related work one titled "Software Defect Prediction Using Support Vector Machine" \cite{alhija2022softwaredefectpredictionusing} and the other titled "Proposed Software Faults Detection Using Hybrid Approach" \cite{https://doi.org/10.1002/spy2.103}.
+The first paper examines the software defect prediction performance and accuracy of a SVM over six differenct kernel funcion to find which kernel function is the best to use in this application however their results showed that no kernel function can give stable performance across different experimental settings.
+The second paper uses a hybrid algorithm proposed on particle swarm optimization and modified genetic algorithm for feature selection and bagging for effective classification of defective or nondefective modules in a dataset; the data being from a set NASA Metric Data Program datasets. 
 
 \section{Dataset}
 

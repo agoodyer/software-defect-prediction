@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.28)  19 NOV 2025 10:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.28)  19 NOV 2025 12:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -392,32 +392,32 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `zi4' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-<example-image-golden.pdf, id=54, 324.82053pt x 200.75pt>
+<example-image-golden.pdf, id=58, 324.82053pt x 200.75pt>
 File: example-image-golden.pdf Graphic file (type pdf)
 <use example-image-golden.pdf>
-Package pdftex.def Info: example-image-golden.pdf  used on input line 115.
+Package pdftex.def Info: example-image-golden.pdf  used on input line 121.
 (pdftex.def)             Requested size: 219.08614pt x 135.40543pt.
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.0pt on input line 118.
-<example-image-a.pdf, id=55, 321.2pt x 240.9pt>
+(Font)              scaled to size 10.0pt on input line 124.
+<example-image-a.pdf, id=59, 321.2pt x 240.9pt>
 File: example-image-a.pdf Graphic file (type pdf)
 <use example-image-a.pdf>
-Package pdftex.def Info: example-image-a.pdf  used on input line 123.
+Package pdftex.def Info: example-image-a.pdf  used on input line 129.
 (pdftex.def)             Requested size: 218.51521pt x 163.89069pt.
-<example-image-b.pdf, id=56, 321.2pt x 240.9pt>
+<example-image-b.pdf, id=60, 321.2pt x 240.9pt>
 File: example-image-b.pdf Graphic file (type pdf)
 <use example-image-b.pdf>
-Package pdftex.def Info: example-image-b.pdf  used on input line 124.
+Package pdftex.def Info: example-image-b.pdf  used on input line 130.
 (pdftex.def)             Requested size: 218.51521pt x 163.89069pt.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.95> on input line 134.
+(Font)              <10.95> on input line 140.
 LaTeX Font Info:    Font shape `T1/zi4/m/n' will be
-(Font)              scaled to size 10.95pt on input line 138.
+(Font)              scaled to size 10.95pt on input line 144.
  [1{/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}
 
 
 
- </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-golden.pdf>] (./main.bbl) [2 </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-a.pdf> </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-b.pdf>] (./main.aux)
+] (./main.bbl) [2 </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-golden.pdf>] [3 </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-a.pdf> </usr/local/texlive/2024/texmf-dist/tex/latex/mwe/example-image-b.pdf>] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
@@ -426,18 +426,18 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 34DEC0E26ED0D2BC1A332FDA77E8D570;1364.
  ) 
 Here is how much of TeX's memory you used:
- 13859 strings out of 474116
- 223652 string characters out of 5743682
- 1943187 words of memory out of 5000000
- 35882 multiletter control sequences out of 15000+600000
- 592024 words of font info for 157 fonts, out of 8000000 for 9000
+ 13883 strings out of 474116
+ 224132 string characters out of 5743682
+ 1946187 words of memory out of 5000000
+ 35888 multiletter control sequences out of 15000+600000
+ 592769 words of font info for 167 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  90i,10n,93p,1050b,486s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmss12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (2 pages, 132923 bytes).
+Output written on main.pdf (3 pages, 136750 bytes).
 PDF statistics:
- 169 PDF objects out of 1000 (max. 8388607)
- 143 compressed objects within 2 object streams
- 25 named destinations out of 1000 (max. 500000)
+ 183 PDF objects out of 1000 (max. 8388607)
+ 156 compressed objects within 2 object streams
+ 28 named destinations out of 1000 (max. 500000)
  36464 words of extra memory for PDF output out of 42996 (max. 10000000)
 
