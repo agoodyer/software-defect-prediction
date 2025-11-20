@@ -21,6 +21,8 @@
 \usepackage{tabularx}
 \usepackage{caption}
 \usepackage{float}
+\usepackage{hyperref}
+
 
 % If the title and author information does not fit in the area allocated, uncomment the following
 %
@@ -28,7 +30,8 @@
 %
 % and set <dim> to something 5cm or larger.
 
-\title{Software Defect Prediction:}
+\title{Software Defect Prediction: \\ \large \normalfont An exploration of Model Interpretability in Software Defect Analysis }
+
 
 
 \author{Aidan Goodyer, Mason Azzopardi \\
@@ -108,11 +111,20 @@ Here, talk about the related work you encountered for your approach. Cite at lea
 
 \section{Dataset}
 
-You should write about your dataset here, following the guidelines regarding item 1. This section may be 0.5-1 pages. Depending on your specific dataset, you may want to include subsections for the preprocessing, annotation, etc.
+
+The NASA Promise Dataset is a collection of roughly 10,000 examples in software defect analysis. These examples consist of static code measures collected from NASA's Metrics Data Program (MDP). Data was collected from real software modules used by various NASA projects over a span of several decades. Data is partitioned into 13 different subsets according to the separate software project source and derived measures, which vary between sets. The attributes are primarily Halstead, McCabe, and Lines of Code related metrics.  
+
+\noindent The original PROMISE repository being no longer accessible, thereforew we opted to use a GitHub mirror of the original dataset. It can be located \underline{\href{https://github.com/klainfo/NASADefectDataset}{here.}}
+
+\subsection{Preprocessing}
+
+The original PROMISE dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. The extent of our preprocessing is solely in converting the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
+  
+
 
 \section{Features}
 
-The NASA Promise dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+The dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
 
 We can formulate the model as a binary classification problem of the form: 
 
