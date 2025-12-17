@@ -14,7 +14,7 @@ def arff_to_csv(arff_filepath):
 
         for col in df.columns:
             if df[col].dtype == 'object':
-                df[col] = df[col].astype(str).str.decode('utf-8')
+                df[col] = df[col].str.decode('utf-8')
 
         base_name = os.path.splitext(os.path.basename(arff_filepath))[0]
         csv_filepath = os.path.join(csv_dir, base_name + '.csv')
