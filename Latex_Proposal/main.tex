@@ -116,15 +116,28 @@ The NASA Promise Dataset is a collection of roughly 10,000 examples in software 
 
 \noindent The original PROMISE repository being no longer accessible, thereforew we opted to use a GitHub mirror of the original dataset. It can be located \underline{\href{https://github.com/klainfo/NASADefectDataset}{here.}}
 
+The second dataset used is the baseline from the GHRP dataset. It was created using the CK code metrics tool on the 6052 instances GHRP dataset. It contains the SHA to the sample code instance, 21 static code metrics, and a label (1/0) informing whether there is a defect or not for every instance.
+
 \subsection{Preprocessing}
 
-The original PROMISE dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. The extent of our preprocessing is solely in converting the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
-  
+The original \textbf{PROMISE} dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. The extent of our preprocessing is solely in converting the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
+
+The \textbf{GHPR} dataset required little preprocessing. 
+\begin{enumerate}
+  \item SHA column removed
+  \item label seperated from static code metrics and assigned as the labels and input values respectively
+  \item the labels and input values were split into an 80/20 train/test split
+  \item input values are standardized
+  \item \textbf{FCNN ONLY} input values transformed into tensor values
+\end{enumerate}
+
+
+
 
 
 \section{Features}
 
-The dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+The \textbf{PROMISE} dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
 
 We can formulate the model as a binary classification problem of the form: 
 
@@ -167,8 +180,49 @@ See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metr
         22. Defect & True/False \\
         \bottomrule
     \end{tabularx}
-        \caption{The summary of code metrics\label{tab:metrics}}
+        \caption{The summary of PROMISE code metrics\label{tab:PROMISE metrics}}
 \end{table}
+The \textbf{GHPR} dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+\begin{table}[htbp]
+    \centering
+    \footnotesize 
+    \begin{tabularx}{\columnwidth}{@{} l X @{}}
+        \toprule
+        \textbf{Metric} & \textbf{Description} \\
+        \midrule
+        1. CBO (v) & Coupling between objects. Counts the number of dependencies a class has. \\
+        2. WMC (g) & 	Weight Method Class or McCabe's complexity. It counts the number of branch instructions in a class.\\
+        3. DIT (g) & Depth Inheritance Tree. It counts the number of "fathers" a class has. All classes have DIT at least 1 (everyone inherits java.lang.Object). \\
+        4. rfc (g) & Response for a Class. Counts the number of unique method invocations in a class. \\
+        5. lcom & Lack of Cohesion of Methods. Calculates LCOM metric. \\
+        6. totalMethods & Counts the number of methods. \\
+        7. totalFields & Counts the number of fields. \\
+        8. NOSI & Number of static invocations. Counts the number of invocations to static methods. \\
+        9. LOC & Lines of code. It counts the lines of count, ignoring empty lines. \\
+        10. returnQty & Quantity of returns. The number of return instructions. \\
+        11. loopQty & Quantity of loops. The number of loops (i.e., for, while, do while, enhanced for). \\
+        12. comparisonsQty & Quantity of comparisons. The number of comparisons (i.e., == and !=). \\
+        13. tryCatchQty & Quantity of try/catches. The number of try/catches. \\
+        14. parenthesizedExpsQty & Quantity of parenthesized expressions. The number of expressions inside parenthesis. \\
+        15. stringLiteralsQty & String literals. The number of string literals (e.g., "John Doe"). \\
+        16. numbersQty & Quantity of Number. The number of numbers (i.e., int, long, double, float) literals. \\
+        17. assignmentsQty & Quantity of Variables. Number of declared variables. \\
+        18. mathOperationsQty & Quantity of Math Operations: The number of math operations (times, divide, remainder, plus, minus, left shit, right shift). \\
+        19. variablesQty & Quantity of Variables. Number of declared variables. \\
+        20. maxNestedBlocks & Max nested blocks. The highest number of blocks nested together. \\
+        21. uniqueWordsQty & Number of unique words. Number of unique words in the source code. \\
+        \bottomrule
+    \end{tabularx}
+        \caption{The summary of GHPR code metrics\label{tab:GHRP metrics}}
+\end{table}
+We can formulate the model as a binary classification problem of the form: 
+
+\begin{itemize}
+  \item \textbf{Input Feature (x):} The 21 static code metrics.
+  \item \textbf{Label (y):} Binary Defect / No-Defect Label.
+\end{itemize}
+
+See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metrics. 
 
 \section{Implementation}
 
