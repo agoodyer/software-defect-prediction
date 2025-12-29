@@ -431,6 +431,28 @@ The FCNN had an accuracy of 75.64\% with the following confusion matrix and Feat
 
 
 \section{Analysis}
+
+\subsection{PROMISE Dataset}
+
+Using the modified logistic regression model, 6 important features were identified by the model, whereas the remaining features had zeroed or nearly-zeroed coefficients suggesting a low relative importance in defect identification. The 6 identified features (in order of importance) are: 
+
+\begin{enumerate}
+  \item \textbf{ NUM\_\allowbreak UNIQUE\_\allowbreak OPERANDS}
+  \item [] The number of unique operands in a software module corresponds to the size of the 'vocabulary' used to define it. A module with many distinct variables may be more defect prone because a developer has to keep track of a large number of variables at once, which may increase the likelihood of a logic error. State and complexity also go hand in hand, so it's logical that a large number of state variables may be correlated with defects. 
+  \item  \textbf{LOC\_\allowbreak EXECUTABLE}
+  \item [] This result suggests that larger programs are more defect prone. This is an intuitive result since logically, more code means that there are more places for a defect to exist, thus increasing the probability of module defectiveness. It is significant that such a simple metric is so powerful at predicting this result, as it reinforces the benefits of small, single purpose modules as taught in software engineering best practices. 
+  \item  \textbf{LOC\_\allowbreak COMMENTS}
+  \item [] This result is unexpected, as logically comments can never produce a bug in a module and are stressed as best practice to write well-commented code. However, it is conceivable that more 'difficult' code is commented heavier particularly in cases where the logic may be nontrivial, thus simpler and understanable code that may be less defect-prone posess fewer comments as a result. This may also be a side effect of the fact that larger codebases have more comments, and larger codebases are more likely to contain a defect. 
+  \item \textbf{DESIGN\_\allowbreak COMPLEXITY}
+  \item [] This metric is a variant of Cyclomatic Complexity, focusing specifically on branches that calll other modules. This result seems to suggest that 'high traffic' modules are more likely to possess a bug. 
+  \item \textbf{CYCLOMATIC\_\allowbreak COMPLEXITY}
+  \item [] Since Cyclomatic Complexity is a measure of branching / independent paths through the code, it may be the case that since high path count modules are less prone to being exhaustively tested, this increases the chance of a defect going unnoticed during testing. This seems to suggest that more complex branching structures give rise to uncovered edge-cases, which is an intuitive result for a programmer. 
+  \item \textbf{HALSTEAD\_ERROR\_EST}
+  \item [] Halstead Error is the lowest identified metric, and is an aggregate measure of seveal Halstead metrics. It makes sense that this feature holds some predictive power, as it is engineered to specifically be an estimate for defects. 
+\end{enumerate}
+
+
+
 \subsection{GHPR Dataset}
 
 \textbf{NOSI}
@@ -460,7 +482,40 @@ Lines of code is the forth/fifth most impactful metric with a positive correlati
 
 \noindent\textbf{Conclusions}
 
+
 Based off the GHPR dataset one can guess that first and foremost using pre-tested dependencies is much more effective than writing your own (This is likely why NOSI has such a large impact on the model). Additionally, having segmented and abstract code can reduce defects, though the more code one writes the more likely one is to make a mistake.
+
+The sparsity of the trained models across both datasets validates Goodhart's law in a quantitative way. The fact that many traditional static metrics had little impact in predicting defects suggests that chasing these metrics may be misguided in the pursuit of eliminating real software defects. 
+
+It is also critical to note that using static metrics as the sole predictor of defect presence is flawed and insufficient to build a 'perfect' defect classifier. While static metrics can often signal an underlying code quality problem that may result in a defect, there are entire classes of defects that are undetectable to this feature set.    
+
+Consider some arbitrary operation on a vector or array. This might be calculating a sum, iterating over items, or a common string operation, like \texttt{strcpy}. A correct version may look like:
+
+\vspace{\baselineskip}
+\textbf{Correct Code: }
+
+\begin{verbatim}
+  for (int i = 0; i < size; i+=1){
+    do_something(v[i]); 
+  }
+\end{verbatim}
+
+Suppose the programmer makes a logic error, and incorrectly assummes that the first index in an array is 1: 
+
+\vspace{\baselineskip}
+\textbf{Defective Code: }
+
+\begin{verbatim}
+  for (int i = 1; i < size; i+=1){
+    do_something(v[i]); 
+  }
+\end{verbatim}
+
+However, from the perspective of our static metrics, these code blocks are \textbf{identical}. They posess the same branching structure, same number of operands, and have the same McCabe and Halstead metrics, despite the clear semantic error. Thus, we can show that it's impossible to perfectly characterize a module from these metrics. Models that depend on static metrics alone posess a fundamental information gap preventing a 'perfect' classifier from existing. This also explains the poor upper bound on accuracy obtained by classifiers of this type, as there may always be undetectable defects present in the data. In the context of the \textbf{Bias-Variance tradeoff}, our model possesses a bias problem, as no optimal parameter can resolve these gaps in information. As such, these results are much more meaningful through the lens of feature selection rather than overall accuracy. 
+
+
+In conclusion, these results suggest that focusing on exhaustively satisfying static code checks as a means of increasing software quality may be ill-advised. If anything, a focus should be placed on a few high-impact metrics that monitor complexity, state, and coupling. Furthermore, the selected features suggest that the size of a module or project is a major driver of defects, which reflects common software engineering design patterns that promote small, modular, and single-responsibility artifacts. 
+
 \end{document}
 
 
