@@ -296,6 +296,12 @@ $$\boldsymbol{\theta}^{(t+1)} = \boldsymbol{\theta}^{(t)} - \eta \nabla_{\boldsy
 
 $$\theta_0^{(t+1)} = \theta_0^{(t)} - \eta \nabla_{\theta_0}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)})$$
 
+One additional modification we make prior to training is to log-transform our dataset by: 
+
+$$x^{(i)}_{log} = ln(1+x^{(i)})$$
+
+This step is important for improving the ability of our linear model to discern patterns at different scales, since many of the metrics included follow a power law relationship. By addressing the skeweness of the data we can compress the distribution and help the model perform better in the general case rather than latching on to outliers. This step is done prior to z-score normalization.
+
 \noindent Our model is trained for 1000 iterations as experimentally convergence occurs within a safe margin of this bound. 
 
 
