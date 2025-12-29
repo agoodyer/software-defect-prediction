@@ -436,20 +436,31 @@ The FCNN had an accuracy of 75.64\% with the following confusion matrix and Feat
 
 Using the modified logistic regression model, 6 important features were identified by the model, whereas the remaining features had zeroed or nearly-zeroed coefficients suggesting a low relative importance in defect identification. The 6 identified features (in order of importance) are: 
 
-\begin{enumerate}
-  \item \textbf{ NUM\_\allowbreak UNIQUE\_\allowbreak OPERANDS}
-  \item [] The number of unique operands in a software module corresponds to the size of the 'vocabulary' used to define it. A module with many distinct variables may be more defect prone because a developer has to keep track of a large number of variables at once, which may increase the likelihood of a logic error. State and complexity also go hand in hand, so it's logical that a large number of state variables may be correlated with defects. 
-  \item  \textbf{LOC\_\allowbreak EXECUTABLE}
-  \item [] This result suggests that larger programs are more defect prone. This is an intuitive result since logically, more code means that there are more places for a defect to exist, thus increasing the probability of module defectiveness. It is significant that such a simple metric is so powerful at predicting this result, as it reinforces the benefits of small, single purpose modules as taught in software engineering best practices. 
-  \item  \textbf{LOC\_\allowbreak COMMENTS}
-  \item [] This result is unexpected, as logically comments can never produce a bug in a module and are stressed as best practice to write well-commented code. However, it is conceivable that more 'difficult' code is commented heavier particularly in cases where the logic may be nontrivial, thus simpler and understanable code that may be less defect-prone posess fewer comments as a result. This may also be a side effect of the fact that larger codebases have more comments, and larger codebases are more likely to contain a defect. 
-  \item \textbf{DESIGN\_\allowbreak COMPLEXITY}
-  \item [] This metric is a variant of Cyclomatic Complexity, focusing specifically on branches that calll other modules. This result seems to suggest that 'high traffic' modules are more likely to possess a bug. 
-  \item \textbf{CYCLOMATIC\_\allowbreak COMPLEXITY}
-  \item [] Since Cyclomatic Complexity is a measure of branching / independent paths through the code, it may be the case that since high path count modules are less prone to being exhaustively tested, this increases the chance of a defect going unnoticed during testing. This seems to suggest that more complex branching structures give rise to uncovered edge-cases, which is an intuitive result for a programmer. 
-  \item \textbf{HALSTEAD\_ERROR\_EST}
-  \item [] Halstead Error is the lowest identified metric, and is an aggregate measure of seveal Halstead metrics. It makes sense that this feature holds some predictive power, as it is engineered to specifically be an estimate for defects. 
-\end{enumerate}
+
+
+\vspace{\baselineskip}\noindent \textbf{ NUM\_\allowbreak UNIQUE\_\allowbreak OPERANDS}
+  
+\noindent The number of unique operands in a software module corresponds to the size of the 'vocabulary' used to define it. A module with many distinct variables may be more defect prone because a developer has to keep track of a large number of variables at once, which may increase the likelihood of a logic error. State and complexity also go hand in hand, so it's logical that a large number of state variables may be correlated with defects. 
+
+\vspace{\baselineskip}\noindent    \textbf{LOC\_\allowbreak EXECUTABLE}
+  
+\noindent This result suggests that larger programs are more defect prone. This is an intuitive result since logically, more code means that there are more places for a defect to exist, thus increasing the probability of module defectiveness. It is significant that such a simple metric is so powerful at predicting this result, as it reinforces the benefits of small, single purpose modules as taught in software engineering best practices. 
+
+\vspace{\baselineskip}\noindent    \textbf{LOC\_\allowbreak COMMENTS}
+  
+\noindent This result is unexpected, as logically comments can never produce a bug in a module and are stressed as best practice to write well-commented code. However, it is conceivable that more 'difficult' code is commented heavier particularly in cases where the logic may be nontrivial, thus simpler and understanable code that may be less defect-prone posess fewer comments as a result. This may also be a side effect of the fact that larger codebases have more comments, and larger codebases are more likely to contain a defect.
+\vspace{\baselineskip}\noindent  \textbf{DESIGN\_\allowbreak COMPLEXITY}
+  
+\noindent  This metric is a variant of Cyclomatic Complexity, focusing specifically on branches that calll other modules. This result seems to suggest that 'high traffic' modules are more likely to possess a bug. 
+
+\vspace{\baselineskip}\noindent    \textbf{CYCLOMATIC\_\allowbreak COMPLEXITY}
+  
+\noindent Since Cyclomatic Complexity is a measure of branching / independent paths through the code, it may be the case that since high path count modules are less prone to being exhaustively tested, this increases the chance of a defect going unnoticed during testing. This seems to suggest that more complex branching structures give rise to uncovered edge-cases, which is an intuitive result for a programmer. 
+
+\vspace{\baselineskip}\noindent    \textbf{HALSTEAD\_ERROR\_EST}
+  
+\noindent Halstead Error is the lowest identified metric, and is an aggregate measure of seveal Halstead metrics. It makes sense that this feature holds some predictive power, as it is engineered to specifically be an estimate for defects. 
+
 
 
 
