@@ -5,6 +5,7 @@
 \usepackage[]{acl}
 \usepackage{times}
 \usepackage{latexsym}
+\usepackage{booktabs}
 
 % For proper rendering and hyphenation of words containing Latin characters (including in bib files)
 \usepackage[T1]{fontenc}
@@ -22,6 +23,9 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{soul,xcolor}
+\usepackage{cancel}
+\usepackage{amsmath}
 
 
 % If the title and author information does not fit in the area allocated, uncomment the following
@@ -112,17 +116,38 @@ Here, talk about the related work you encountered for your approach. Cite at lea
 \section{Dataset}
 
 
+To explore the robustness of static metrics as defect predictors, we select two datasets to investigate. By training on two independent sources, we aim to verify that our results generalize across different software engineering domains, or otherwise identify how specific software paradigms or development environments influence the efficacy of defect discovery. 
+
+\subsection{NASA Promise Dataset}
+
 The NASA Promise Dataset is a collection of roughly 10,000 examples in software defect analysis. These examples consist of static code measures collected from NASA's Metrics Data Program (MDP). Data was collected from real software modules used by various NASA projects over a span of several decades. Data is partitioned into 13 different subsets according to the separate software project source and derived measures, which vary between sets. The attributes are primarily Halstead, McCabe, and Lines of Code related metrics.  
 
+
+
 \noindent The original PROMISE repository being no longer accessible, thereforew we opted to use a GitHub mirror of the original dataset. It can be located \underline{\href{https://github.com/klainfo/NASADefectDataset}{here.}}
+
+\subsection{GHRP Dataset}
 
 The second dataset used is the baseline from the GHRP dataset. It was created using the CK code metrics tool on the 6052 instances GHRP dataset. It contains the SHA to the sample code instance, 21 static code metrics, and a label (1/0) informing whether there is a defect or not for every instance.
 
 \subsection{Preprocessing}
 
-The original \textbf{PROMISE} dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. The extent of our preprocessing is solely in converting the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
+The original \textbf{PROMISE} dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers.To preprocess the dataset, we convert the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
 
-The \textbf{GHPR} dataset required little preprocessing. 
+Since the numerical ranges vary extremely for individual input features, we utilize z-score normalization to standardize the deign matrix to have a mean of 0 and a standard deviation of 1 using the formula: 
+
+$$ \phi(x) = \frac{x-\mu}{\sigma}$$
+
+where:
+
+$$ \mu = \frac{1}{n} \sum_{i=1}^n x_i \hspace{5mm} \sigma = \sqrt{ \frac{1}{n}\sum_{i=1}^n (x_i-\mu)^2} $$
+
+Defining a consistent scale is particularly important for the purpose of comparing feature importance, as this ensures that features cannot be scaled by an arbitrary constant to affect the magnitude of its learned weight. 
+
+
+
+
+The \textbf{GHPR} dataset required little preprocessing, as its baseline included far less data duplication and errors than the PROMISE dataset. 
 \begin{enumerate}
   \item SHA column removed
   \item label seperated from static code metrics and assigned as the labels and input values respectively
@@ -137,7 +162,7 @@ The \textbf{GHPR} dataset required little preprocessing.
 
 \section{Features}
 
-The \textbf{PROMISE} dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+The \textbf{PROMISE} dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model, except for 'LOC\_\allowbreak BLANK', 'LOC\_\allowbreak TOTAL', and 'LOC\_\allowbreak AND\_\allowbreak COMMENT'. The rationale for dropping these metrics is due to their extreme collineariy, as these metrics are simply proxies for Lines of Code in every case. 
 
 We can formulate the model as a binary classification problem of the form: 
 
@@ -160,10 +185,10 @@ See Table \underline{\ref{tab:PROMISE metrics}} for a description of each of the
         2. v (g) & Cyclomatic complexity \\
         3. ev (g) & Essential complexity \\
         4. iv (g) & Design complexity \\
-        5. loCode & Line count \\
+        5. \textcolor{red}{\st{loCode}} & Line count \\
         6. loComment & Count of lines of comments \\
-        7. loBlank & Count of blank lines \\
-        8. loCodeAndComment & Count of code and comment lines \\
+        7. \textcolor{red}{\st{loBlank}} & Count of blank lines \\
+        8. \textcolor{red}{\st{loCodeAndComment}} & Count of code and comment lines \\
         9. uniq\_Op & Unique operators \\
         10. uniq\_Opnd & Unique operands \\
         11. total\_Op & Total operators \\
@@ -180,8 +205,10 @@ See Table \underline{\ref{tab:PROMISE metrics}} for a description of each of the
         22. Defect & True/False \\
         \bottomrule
     \end{tabularx}
-        \caption{The summary of PROMISE code metrics\label{tab:PROMISE metrics}}
+        \caption{The summary of PROMISE code metrics (red unused)\label{tab:PROMISE metrics}}
 \end{table}
+
+
 The \textbf{GHPR} dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
 \begin{table}[htbp]
     \centering
@@ -226,6 +253,59 @@ See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metr
 
 \section{Implementation}
 
+\subsection{Logistic Regression Model}
+
+Our implementation utilizes a Logistic Regression model trained using gradient descent. The model is modified to use L1 regularization and an asymmetric loss function to meet the needs of the defect prediction task. 
+
+The probability of the prensence of a defect in a module, $p(i)$ is calculated using sigmoid activation:
+
+$$
+p(i) = \sigma\!\left( \theta^\top x^{(i)} + \theta_0 \right)
+= \frac{1}{1 + e^{-\left( \theta^\top x^{(i)} + \theta_0 \right)}}
+$$
+
+Two key changes were made to favour interpretability and correct classification of the minority class. 
+
+First, we modify the logistic regression to be asymmetric. When true defects are misclassified, we apply an asymmetric penalty to heavily discourage this type of mistake in the model. Since the consequences of missing a software defect are far more severe than investigating a few 'false alarm' cases, skewing the penalty favors a model that minimizes these critical mistakes. 
+
+We define the weighted error term $e^{(i)}$ be: 
+
+
+$$e^{(i)} = \begin{cases} 4(p^{(i)} - 1) & \text{if } y^{(i)} = 1 \\ p^{(i)} - 0 & \text{if } y^{(i)} = 0 \end{cases}$$
+
+
+The second modification we make to standard logistic regression is L1 regularization. This choice encourages sparsity in the learned weights, helping to drive irrelevant metrics to zero within the model. This is ideal for our feature selection goals as it drives the model to surface the most 'useful' features for prediction. 
+
+With this modification, the gradients of our loss function become: 
+
+$$\nabla_{\boldsymbol{\theta}}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)}) = \frac{1}{n} \sum_{i=1}^{n} e^{(i)} \mathbf{x}^{(i)} + \lambda \cdot \text{sign}(\boldsymbol{\theta}^{(t)})$$
+
+$$\nabla_{\theta_0}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)}) = \frac{1}{n} \sum_{i=1}^{n} e^{(i)} $$
+
+
+Using the definition of the $L_1$ norm:
+$$\lVert x \rVert _1 = \sum_{i=1}^{n} |x_i|$$
+
+\noindent The gradient of the $\lambda$ term becomes $\text{sign}(\boldsymbol{\theta}^{(t)})$ since $\frac{d}{dx} \left|x\right| = \text{sign}(x) $ 
+
+
+Lastly, we use the standard gradient descent update rule (with $\eta = 0.1$): 
+
+
+$$\boldsymbol{\theta}^{(t+1)} = \boldsymbol{\theta}^{(t)} - \eta \nabla_{\boldsymbol{\theta}}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)})$$
+
+$$\theta_0^{(t+1)} = \theta_0^{(t)} - \eta \nabla_{\theta_0}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)})$$
+
+One additional modification we make prior to training is to log-transform our dataset by: 
+
+$$x^{(i)}_{log} = ln(1+x^{(i)})$$
+
+This step is important for improving the ability of our linear model to discern patterns at different scales, since many of the metrics included follow a power law relationship. By addressing the skeweness of the data we can compress the distribution and help the model perform better in the general case rather than latching on to outliers. This step is done prior to z-score normalization.
+
+\noindent Our model is trained for 1000 iterations as experimentally convergence occurs within a safe margin of this bound. 
+
+
+
 \subsection{Fully Connected Neural Network (FCNN)}
 The FCNN model was constructed in PyTorch with the following architecture:
 \begin{itemize}
@@ -240,6 +320,77 @@ BCE loss:
 $$-{(y\log(p) + (1 - y)\log(1 - p))}$$
 
 \section{Results and Evaluation}
+
+\subsection{PROMISE Dataset Logistic Regression Model}
+
+The logistic regression model was evaluated using an 80\% / 20\% train/test split. This split was done using the 'stratify' option to preserve the relative frequency of the minority class (defects) across both training and testing. This is important due to the substantial class imbalance, where a vast majority of the dataset is defect-free.   
+
+\noindent \textbf{Confusion Matrix: Training Set}
+\[
+\begin{array}{c|cc}
+ & \hat{y}=0 & \hat{y}=1 \\
+\hline
+y=0 & 3186~(\mathrm{TN}) & 1700~(\mathrm{FP}) \\
+y=1 & 485~(\mathrm{FN}) & 805~(\mathrm{TP})
+\end{array}
+\]
+
+
+
+
+\noindent \textbf{Confusion Matrix: Test Set}
+\[
+\begin{array}{c|cc}
+ & \hat{y}=0 & \hat{y}=1 \\
+\hline
+y=0 & 787~(\mathrm{TN}) & 435~(\mathrm{FP}) \\
+y=1 & 110~(\mathrm{FN}) & 212~(\mathrm{TP})
+\end{array}
+\]
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{../log-regression-figures/accuracy.png}
+  \caption{Accuracy results for the Logistic Regression Model on the PROMISE dataset. Note that overall accuracy is low partially due to the intentional permissiveness of false positives. }
+  \label{fig:accuracy-log-promise}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{../log-regression-figures/features.png}
+  \caption{Feature Importance for the Logistic Regression Model on the PROMISE dataset}
+  \label{fig:accuracy-log-promise}
+\end{figure}
+
+\begin{table*}[t] % The asterisk allows it to span both columns
+    \centering
+    \caption{Feature Importance for Defect Prediction (PROMISE Dataset)}
+    \label{tab:feature_importance_halstead_wide}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}} lcl @{}}
+        \toprule
+        \textbf{Metric Name} & \textbf{Weight Magnitude} & \textbf{Impact} \\
+        \midrule
+        NUM\_UNIQUE\_OPERANDS & 0.2456 & $\uparrow$ Probability \\
+        LOC\_EXECUTABLE & 0.1657 & $\uparrow$ Probability \\
+        LOC\_COMMENTS & 0.0970 & $\uparrow$ Probability \\
+        DESIGN\_COMPLEXITY & 0.0709 & $\uparrow$ Probability \\
+        CYCLOMATIC\_COMPLEXITY & 0.0679 & $\uparrow$ Probability \\
+        HALSTEAD\_ERROR\_EST & 0.0393 & $\uparrow$ Probability \\
+        NUM\_OPERANDS & 0.0013 & Little Impact \\
+        HALSTEAD\_EFFORT & 0.0012 & Little Impact \\
+        HALSTEAD\_LEVEL & 0.0011 & Little Impact \\
+        HALSTEAD\_PROG\_TIME & 0.0009 & Little Impact \\
+        ESSENTIAL\_COMPLEXITY & 0.0008 & Little Impact \\
+        HALSTEAD\_LENGTH & 0.0007 & Little Impact \\
+        NUM\_UNIQUE\_OPERATORS & 0.0007 & Little Impact \\
+        NUM\_OPERATORS & 0.0003 & Little Impact \\
+        BRANCH\_COUNT & 0.0002 & Little Impact \\
+        HALSTEAD\_VOLUME & 0.0001 & Little Impact \\
+        HALSTEAD\_CONTENT & 0.0001 & Little Impact \\
+        HALSTEAD\_DIFFICULTY & 0.0001 & Little Impact \\
+        \bottomrule
+    \end{tabular*}
+\end{table*}
+
+
 \subsection{Logistic Regression on GHPR}
 Multiple evaluation metrics were used when training and testing the FCNN model; confusion matrices and an accuracy score are calculated using the test set and are used to determine if the models are effectively classifying the datapoints. To observe sparsity in our logistic regression models, we view the absolute theta value that corresponds to each feature; the larger that theta value, the higher importance we assign to the corresponding feature, if a feature has a theta $<$ 0.001, we assume little to no impact is caused by that feature.
 
@@ -286,6 +437,39 @@ The FCNN had an accuracy of 75.64\% with the following confusion matrix and Feat
 
 
 \section{Analysis}
+
+\subsection{PROMISE Dataset}
+
+Using the modified logistic regression model, 6 important features were identified by the model, whereas the remaining features had zeroed or nearly-zeroed coefficients suggesting a low relative importance in defect identification. The 6 identified features (in order of importance) are: 
+
+
+
+\vspace{\baselineskip}\noindent \textbf{ NUM\_\allowbreak UNIQUE\_\allowbreak OPERANDS}
+  
+\noindent The number of unique operands in a software module corresponds to the size of the 'vocabulary' used to define it. A module with many distinct variables may be more defect prone because a developer has to keep track of a large number of variables at once, which may increase the likelihood of a logic error. State and complexity also go hand in hand, so it's logical that a large number of state variables may be correlated with defects. 
+
+\vspace{\baselineskip}\noindent    \textbf{LOC\_\allowbreak EXECUTABLE}
+  
+\noindent This result suggests that larger programs are more defect prone. This is an intuitive result since logically, more code means that there are more places for a defect to exist, thus increasing the probability of module defectiveness. It is significant that such a simple metric is so powerful at predicting this result, as it reinforces the benefits of small, single purpose modules as taught in software engineering best practices. 
+
+\vspace{\baselineskip}\noindent    \textbf{LOC\_\allowbreak COMMENTS}
+  
+\noindent This result is unexpected, as logically comments can never produce a bug in a module and are stressed as best practice to write well-commented code. However, it is conceivable that more 'difficult' code is commented heavier particularly in cases where the logic may be nontrivial, thus simpler and understanable code that may be less defect-prone posess fewer comments as a result. This may also be a side effect of the fact that larger codebases have more comments, and larger codebases are more likely to contain a defect.
+\vspace{\baselineskip}\noindent  \textbf{DESIGN\_\allowbreak COMPLEXITY}
+  
+\noindent  This metric is a variant of Cyclomatic Complexity, focusing specifically on branches that calll other modules. This result seems to suggest that 'high traffic' modules are more likely to possess a bug. 
+
+\vspace{\baselineskip}\noindent    \textbf{CYCLOMATIC\_\allowbreak COMPLEXITY}
+  
+\noindent Since Cyclomatic Complexity is a measure of branching / independent paths through the code, it may be the case that since high path count modules are less prone to being exhaustively tested, this increases the chance of a defect going unnoticed during testing. This seems to suggest that more complex branching structures give rise to uncovered edge-cases, which is an intuitive result for a programmer. 
+
+\vspace{\baselineskip}\noindent    \textbf{HALSTEAD\_ERROR\_EST}
+  
+\noindent Halstead Error is the lowest identified metric, and is an aggregate measure of seveal Halstead metrics. It makes sense that this feature holds some predictive power, as it is engineered to specifically be an estimate for defects. 
+
+
+
+
 \subsection{GHPR Dataset}
 
 \textbf{NOSI}
@@ -315,7 +499,40 @@ Lines of code is the forth/fifth most impactful metric with a positive correlati
 
 \noindent\textbf{Conclusions}
 
+
 Based off the GHPR dataset one can guess that first and foremost using pre-tested dependencies is much more effective than writing your own (This is likely why NOSI has such a large impact on the model). Additionally, having segmented and abstract code can reduce defects, though the more code one writes the more likely one is to make a mistake.
+
+The sparsity of the trained models across both datasets validates Goodhart's law in a quantitative way. The fact that many traditional static metrics had little impact in predicting defects suggests that chasing these metrics may be misguided in the pursuit of eliminating real software defects. 
+
+It is also critical to note that using static metrics as the sole predictor of defect presence is flawed and insufficient to build a 'perfect' defect classifier. While static metrics can often signal an underlying code quality problem that may result in a defect, there are entire classes of defects that are undetectable to this feature set.    
+
+Consider some arbitrary operation on a vector or array. This might be calculating a sum, iterating over items, or a common string operation, like \texttt{strcpy}. A correct version may look like:
+
+\vspace{\baselineskip}
+\textbf{Correct Code: }
+
+\begin{verbatim}
+  for (int i = 0; i < size; i+=1){
+    do_something(v[i]); 
+  }
+\end{verbatim}
+
+Suppose the programmer makes a logic error, and incorrectly assummes that the first index in an array is 1: 
+
+\vspace{\baselineskip}
+\textbf{Defective Code: }
+
+\begin{verbatim}
+  for (int i = 1; i < size; i+=1){
+    do_something(v[i]); 
+  }
+\end{verbatim}
+
+However, from the perspective of our static metrics, these code blocks are \textbf{identical}. They posess the same branching structure, same number of operands, and have the same McCabe and Halstead metrics, despite the clear semantic error. Thus, we can show that it's impossible to perfectly characterize a module from these metrics. Models that depend on static metrics alone posess a fundamental information gap preventing a 'perfect' classifier from existing. This also explains the poor upper bound on accuracy obtained by classifiers of this type, as there may always be undetectable defects present in the data. In the context of the \textbf{Bias-Variance tradeoff}, our model possesses a bias problem, as no optimal parameter can resolve these gaps in information. As such, these results are much more meaningful through the lens of feature selection rather than overall accuracy. 
+
+
+In conclusion, these results suggest that focusing on exhaustively satisfying static code checks as a means of increasing software quality may be ill-advised. If anything, a focus should be placed on a few high-impact metrics that monitor complexity, state, and coupling. Furthermore, the selected features suggest that the size of a module or project is a major driver of defects, which reflects common software engineering design patterns that promote small, modular, and single-responsibility artifacts. 
+
 \end{document}
 
 
