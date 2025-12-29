@@ -146,7 +146,7 @@ We can formulate the model as a binary classification problem of the form:
   \item \textbf{Label (y):} Binary Defect / No-Defect Label.
 \end{itemize}
 
-See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metrics. 
+See Table \underline{\ref{tab:PROMISE metrics}} for a description of each of the 21 metrics. 
 
 
 \begin{table}[htbp]
@@ -226,89 +226,103 @@ See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metr
 
 \section{Implementation}
 
-Describe your model and implementation here. Refer to item 4. This may take around a page.
+\subsection{Fully Connected Neural Network (FCNN)}
+The FCNN model was constructed in PyTorch with the following architecture:
+\begin{itemize}
+    \item \textbf{Input Layer:} Accepts 21 input features
+    \item \textbf{Hidden Layer 1:} 32 neurons, ReLU activation, 50\% Dropout.
+    \item \textbf{Hidden Layer 2:} 16 neurons, ReLU activation, 50\% Dropout.
+    \item \textbf{Output Layer:} Single neuron with sigmoid activation for classification
+\end{itemize}
+The FCNN model was trained with stochastic gradient descent (SGD) using a Binary Cross-Entropy Loss as its loss function.
+
+BCE loss:
+$$-{(y\log(p) + (1 - y)\log(1 - p))}$$
 
 \section{Results and Evaluation}
+\subsection{Logistic Regression on GHPR}
+Multiple evaluation metrics were used when training and testing the FCNN model; confusion matrices and an accuracy score are calculated using the test set and are used to determine if the models are effectively classifying the datapoints. To observe sparsity in our logistic regression models, we view the absolute theta value that corresponds to each feature; the larger that theta value, the higher importance we assign to the corresponding feature, if a feature has a theta $<$ 0.001, we assume little to no impact is caused by that feature.
 
-How are you evaluating your model? What results do you have so far? What are your baselines? Refer to item 5. This may take around 0.5 pages.
+This model had an accuracy of 71.68\% with the following confusion matrix and Feature Importance Chart
 
-\section{Feedback and Plans}
+\begin{table}[h]
+\centering
+ 
+\begin{tabular}{|m{1cm}| m{1.5cm} |m{2.5cm}|}
+\hline
+\textbf{Metric Name} & \textbf{Weight Magnitude} & \textbf{Impact} \\ \hline
+nosi & 2.1487 & $\downarrow$ Probability \\ \hline
+dit & 0.5788 & $\downarrow$ Probability \\ \hline
+cbo & 0.5759 & $\uparrow$ Probability \\ \hline
+rfc & 0.3825 & $\downarrow$ Probability \\ \hline
+loc & 0.2674 & $\uparrow$ Probability \\ \hline
 
-Write about your plans for the remainder of the project. This should include a discussion of the feedback you received from your TA, and how you plan to improve your approach. Reflect on your implementation and areas for improvement. Refer to item 6. This may be around 0.5 pages.
+\end{tabular}
+\caption{Feature Importance for Defect Prediction, view model.ipynb for full table}
+\label{tab:feature_importance}
+\end{table}
+
+\includegraphics[scale = 0.25]{LR GHRP Confusion Matrix.png}
+
+\includegraphics[scale = 0.25]{LR GHRP Feature Importance.png}
+\subsection{FCNN}
+Multiple evaluation metrics were used when training and testing the FCNN model; confusion matrices and an accuracy score are calculated using the test set and are used to determine if the models are effectively classifying the datapoints. To observe the sparsity of our FCNN, each feature's importance is represented by its contribution to the total weights of the first layer.
+\begin{itemize}
+    \item $w_{j,i}$ represents the \textit{i}th weight of the \textit{j}th input
+    \item $s_j$ represents the sum of the weights of the \textit{j}th input
+\end{itemize}
+
+$$s_j = \sum_{i=1}^n w_{j,i}$$
+$$ W = \sum_{i=1,j=1}^{n,m}w_{j,i}$$
+$$ns_j = \frac{s_j}{W}$$
+
+\textbf{The larger the $ns_j$ value the more impactful we determine the \textit{j}th feature}
+
+The FCNN had an accuracy of 75.64\% with the following confusion matrix and Feature Importance Chart
+
+\includegraphics[scale = 0.3]{FCNN Confusion Matrix.png}
+
+\includegraphics[scale = 0.3]{FCNN Feature Importance.png}
+
+
+\section{Analysis}
+\subsection{GHPR Dataset}
+
+\textbf{NOSI}
+
+Number of static invocations is by far the most impactful metric, and it is shown to have a negative correlation to the probability of a defect being in the code sample; I.e. the more static method calls the less likely there is to be a defect. This could be because code with many static method calls tends to have many static methods defined (i.e it is structured) or is using predefined methods from dependencies (which test to be tested more than code written for an individual).
+\\
+
+\noindent\textbf{DIT}
+
+Depth inheritance tree is the second most impactful metric, and it has a negative correlation to the probability of a defect occurring; i.e the more "fathers" classes have the less likely defects occur. This could be because more abstract code is more flexible, leading to less errors. Of course this probably has it's limits, abstracting classes for the sake of abstracting isn't going to improve your code.
+\\
+
+\noindent\textbf{CBO}
+
+Coupling between objects is the third most impactful metric with a positive correlation to defect occurrence; i.e. the more dependencies classes have the more likely a defect will occur. There is just more factors to consider when implementing classes with more dependencies, so people are more likely to make mistakes.
+\\
+
+\noindent\textbf{RFC}
+
+Response for a class is the forth/fifth most impactful metric with a negative correlation to defect occurrence; i.e. the more unique method invocations in classes the less likely a defect will occur. More unique method invocation may implies classes are more carefully segmented between methods.
+\\
+
+\noindent\textbf{LOC}
+
+Lines of code is the forth/fifth most impactful metric with a positive correlation to defect occurrence. As there are more chance to make mistakes as one writes more code of course defects scale with lines of code. One can also argue that DIT, CBO, and RFC increase as LOC increases so there may be some redundancy in this metric.
+\\
+
+\noindent\textbf{Conclusions}
+
+Based off the GHPR dataset one can guess that first and foremost using pre-tested dependencies is much more effective than writing your own (This is likely why NOSI has such a large impact on the model). Additionally, having segmented and abstract code can reduce defects, though the more code one writes the more likely one is to make a mistake.
+\end{document}
+
 
 \section{Template Notes}
 
 You can remove this section or comment it out, as it only contains instructions for how to use this template. You may use subsections in your document as you find appropriate.
 
-\subsection{Tables and figures}
-
-See Table~\ref{citation-guide} for an example of a table and its caption.
-See Figure~\ref{fig:experiments} for an example of a figure and its caption.
-
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{example-image-golden}
-  \caption{A figure with a caption that runs for more than one line.
-    Example image is usually available through the \texttt{mwe} package
-    without even mentioning it in the preamble.}
-  \label{fig:experiments}
-\end{figure}
-
-\begin{figure*}[t]
-  \includegraphics[width=0.48\linewidth]{example-image-a} \hfill
-  \includegraphics[width=0.48\linewidth]{example-image-b}
-  \caption {A minimal working example to demonstrate how to place
-    two images side-by-side.}
-\end{figure*}
-
-
-\subsection{Citations}
-
-\begin{table*}
-  \centering
-  \begin{tabular}{lll}
-    \hline
-    \textbf{Output}           & \textbf{natbib command} & \textbf{ACL only command} \\
-    \hline
-    \citep{Gusfield:97}       & \verb|\citep|           &                           \\
-    \citealp{Gusfield:97}     & \verb|\citealp|         &                           \\
-    \citet{Gusfield:97}       & \verb|\citet|           &                           \\
-    \citeyearpar{Gusfield:97} & \verb|\citeyearpar|     &                           \\
-    \citeposs{Gusfield:97}    &                         & \verb|\citeposs|          \\
-    \hline
-  \end{tabular}
-  \caption{\label{citation-guide}
-    Citation commands supported by the style file.
-  }
-\end{table*}
-
-Table~\ref{citation-guide} shows the syntax supported by the style files.
-We encourage you to use the natbib styles.
-You can use the command \verb|\citet| (cite in text) to get ``author (year)'' citations, like this citation to a paper by \citet{Gusfield:97}.
-You can use the command \verb|\citep| (cite in parentheses) to get ``(author, year)'' citations \citep{Gusfield:97}.
-You can use the command \verb|\citealp| (alternative cite without parentheses) to get ``author, year'' citations, which is useful for using citations within parentheses (e.g. \citealp{Gusfield:97}).
-
-\subsection{References}
-
-\nocite{Ando2005,andrew2007scalable,rasooli-tetrault-2015}
-
-Many websites where you can find academic papers also allow you to export a bib file for citation or bib formatted entry. Copy this into the \texttt{custom.bib} and you will be able to cite the paper in the \LaTeX{}. You can remove the example entries.
-
-\subsection{Equations}
-
-An example equation is shown below:
-\begin{equation}
-  \label{eq:example}
-  A = \pi r^2
-\end{equation}
-
-Labels for equation numbers, sections, subsections, figures and tables
-are all defined with the \verb|\label{label}| command and cross references
-to them are made with the \verb|\ref{label}| command.
-This an example cross-reference to Equation~\ref{eq:example}. You can also write equations inline, like this: $A=\pi r^2$.
-
-
-% \section*{Limitations}
 
 \section*{Team Contributions}
 
