@@ -128,7 +128,7 @@ The NASA Promise Dataset is a collection of roughly 10,000 examples in software 
 
 \subsection{GHRP Dataset}
 
-The second dataset used is the baseline from the \href{https://github.com/feiwww/GHPR_dataset}{Github Pull Request} (GHRP) dataset. It was created using the CK code metrics tool on the 6052 instances of bug related pull requests. It contains the SHA to the sample code instance, 21 static code metrics, and a label (1/0) informing whether there is a defect or not for every instance.
+The second dataset used is the baseline from the \href{https://github.com/feiwww/GHPR_dataset}{Github Pull Request} (GHRP) dataset. It was created using the \href{https://github.com/mauricioaniche/ckURL}{CK} code metrics tool on the 6052 instances of bug related pull requests. It contains the SHA to the sample code instance, 21 static code metrics, and a label (1/0) informing whether there is a defect or not for every instance.
 
 \subsection{Preprocessing}
 
@@ -533,23 +533,33 @@ However, from the perspective of our static metrics, these code blocks are \text
 
 In conclusion, these results suggest that focusing on exhaustively satisfying static code checks as a means of increasing software quality may be ill-advised. If anything, a focus should be placed on a few high-impact metrics that monitor complexity, state, and coupling. Furthermore, the selected features suggest that the size of a module or project is a major driver of defects, which reflects common software engineering design patterns that promote small, modular, and single-responsibility artifacts. 
 
-\end{document}
 
 
-\section{Template Notes}
-
-You can remove this section or comment it out, as it only contains instructions for how to use this template. You may use subsections in your document as you find appropriate.
 
 
-\section*{Team Contributions}
 
-Write in this section a few sentences describing the contributions of each team member. What did each member work on? Refer to item 7.
+\section*{References}
+
+\begin{thebibliography}{9}
+
+        \bibitem{GHPR}
+        \textit{GHPR Dataset}. 
+        2021. 
+        \url{https://github.com/feiwww/GHPR_dataset} 
+        (Accessed: 2025-11-29).
+
+        \bibitem{PROMISE}
+        \textit{PROMISE Dataset}.
+        2016.
+        \url{https://github.com/klainfo/NASADefectDataset}
+        (Accessed: 2025-11-25)
+\end{thebibliography}
 
 % Bibliography entries for the entire Anthology, followed by custom entries
-%\bibliography{custom,anthology-overleaf-1,anthology-overleaf-2}
+
 
 % Custom bibliography entries only
-\bibliography{custom}
+
 
 % \appendix
 
