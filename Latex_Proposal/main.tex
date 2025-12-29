@@ -5,6 +5,7 @@
 \usepackage[]{acl}
 \usepackage{times}
 \usepackage{latexsym}
+\usepackage{amsmath}
 
 % For proper rendering and hyphenation of words containing Latin characters (including in bib files)
 \usepackage[T1]{fontenc}
@@ -22,6 +23,8 @@
 \usepackage{caption}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{soul,xcolor}
+\usepackage{cancel}
 
 
 % If the title and author information does not fit in the area allocated, uncomment the following
@@ -79,6 +82,7 @@
 \maketitle
 % \begin{abstract}
 % \end{abstract}
+\setstcolor{red}
 
 \section{Introduction}
 
@@ -103,8 +107,6 @@ However, investing time into ensuring these metrics are met is painstaking, and 
   Specifically, we employ logistic regression in conjunction with L1 regularization to favour sparsity in the learned parameter, allowing us to derive an understanding of which metrics contribute meaningfully to defect prediction. 
   By favouring an interpretable sparse model, we aim to provide analytical insight into the value of these metrics.
 
-
-
 \section{Related Work}
 
 Here, talk about the related work you encountered for your approach. Cite at least 5 references. Refer to item 2. No one has done exactly your task? Write about the most similar thing you can find. This should be around 0.25-0.5 pages.
@@ -118,13 +120,23 @@ The NASA Promise Dataset is a collection of roughly 10,000 examples in software 
 
 \subsection{Preprocessing}
 
-The original PROMISE dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. The extent of our preprocessing is solely in converting the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
+The original PROMISE dataset ($D'$) contains significant flaws including duplicate entries, empty modules, and inconsistencies that may pose challenges in training an effective classifier. As such, we opt to start from a pre-cleaned version of the dataset ($D''$) to reduce manual cleaning and deduplication efforts. $D''$ is frequently used as a common baseline across several of the referenced papers. To preprocess the dataset, we convert the source \verb|.arff| files to  \verb|.csv| using a minimal python script.
   
+Since the numerical ranges vary extremely for individual input features, we utilize z-score normalization to standardize the deign matrix to have a mean of 0 and a standard deviation of 1 using the formula: 
+
+$$ \phi(x) = \frac{x-\mu}{\sigma}$$
+
+where:
+
+$$ \mu = \frac{1}{n} \sum_{i=1}^n x_i \hspace{5mm} \sigma = \sqrt{ \frac{1}{n}\sum_{i=1}^n (x_i-\mu)^2} $$
+
+Defining a consistent scale is particularly important for the purpose of comparing feature importance, as this ensures that features cannot be scaled by an arbitrary constant to affect the magnitude of its learned weight. 
+
 
 
 \section{Features}
 
-The dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model.
+The dataset is comprised of 21 static code metrics along with a binary Y/N label indicating the presence of defects. We plan to use all of the included metrics in our model, except for 'LOC\_BLANK', 'LOC\_TOTAL', and 'LOC\_AND\_COMMENT'. The rationale for dropping these metrics is due to their extreme collineariy, as these metrics are simply proxies for Lines of Code in every case. 
 
 We can formulate the model as a binary classification problem of the form: 
 
@@ -147,10 +159,10 @@ See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metr
         2. v (g) & Cyclomatic complexity \\
         3. ev (g) & Essential complexity \\
         4. iv (g) & Design complexity \\
-        5. loCode & Line count \\
+        5. \textcolor{red}{\st{loCode}} & Line count \\
         6. loComment & Count of lines of comments \\
-        7. loBlank & Count of blank lines \\
-        8. loCodeAndComment & Count of code and comment lines \\
+        7. \textcolor{red}{\st{loBlank}} & Count of blank lines \\
+        8. \textcolor{red}{\st{loCodeAndComment}} & Count of code and comment lines \\
         9. uniq\_Op & Unique operators \\
         10. uniq\_Opnd & Unique operands \\
         11. total\_Op & Total operators \\
@@ -167,20 +179,94 @@ See Table \underline{\ref{tab:metrics}} for a description of each of the 21 metr
         22. Defect & True/False \\
         \bottomrule
     \end{tabularx}
-        \caption{The summary of code metrics\label{tab:metrics}}
+        \caption{The summary of code metrics (red unused)\label{tab:metrics}}
 \end{table}
 
 \section{Implementation}
 
-Describe your model and implementation here. Refer to item 4. This may take around a page.
+\subsection{Logistic Regression Model}
+
+Our implementation utilizes a Logistic Regression model trained using gradient descent. The model is modified to use L1 regularization and an asymmetric loss function to meet the needs of the defect prediction task. 
+
+The probability of the prensence of a defect in a module, $p(i)$ is calculated using sigmoid activation:
+
+$$
+p(i) = \sigma\!\left( \theta^\top x^{(i)} + \theta_0 \right)
+= \frac{1}{1 + e^{-\left( \theta^\top x^{(i)} + \theta_0 \right)}}
+$$
+
+Two key changes were made to favour interpretability and correct classification of the minority class. 
+
+First, we modify the logistic regression to be asymmetric. When true defects are misclassified, we apply an asymmetric penalty to heavily discourage this type of mistake in the model. Since the consequences of missing a software defect are far more severe than investigating a few 'false alarm' cases, skewing the penalty favors a model that minimizes these critical mistakes. 
+
+We define the weighted error term $e^{(i)}$ be: 
+
+
+$$e^{(i)} = \begin{cases} 4(p^{(i)} - 1) & \text{if } y^{(i)} = 1 \\ p^{(i)} - 0 & \text{if } y^{(i)} = 0 \end{cases}$$
+
+
+The second modification we make to standard logistic regression is L1 regularization. This choice encourages sparsity in the learned weights, helping to drive irrelevant metrics to zero within the model. This is ideal for our feature selection goals as it drives the model to surface the most 'useful' features for prediction. 
+
+With this modification, the gradients of our loss function become: 
+
+$$\nabla_{\boldsymbol{\theta}}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)}) = \frac{1}{n} \sum_{i=1}^{n} e^{(i)} \mathbf{x}^{(i)} + \lambda \cdot \text{sign}(\boldsymbol{\theta}^{(t)})$$
+
+$$\nabla_{\theta_0}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)}) = \frac{1}{n} \sum_{i=1}^{n} e^{(i)} $$
+
+
+Using the definition of the $L_1$ norm:
+$$\lVert x \rVert _1 = \sum_{i=1}^{n} |x_i|$$
+
+\noindent The gradient of the $\lambda$ term becomes $\text{sign}(\boldsymbol{\theta}^{(t)})$ since $\frac{d}{dx} \left|x\right| = \text{sign}(x) $ 
+
+
+Lastly, we use the standard gradient descent update rule (with $\eta = 0.1$): 
+
+
+$$\boldsymbol{\theta}^{(t+1)} = \boldsymbol{\theta}^{(t)} - \eta \nabla_{\boldsymbol{\theta}}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)})$$
+
+$$\theta_0^{(t+1)} = \theta_0^{(t)} - \eta \nabla_{\theta_0}J(\boldsymbol{\theta}^{(t)}, \theta_0^{(t)})$$
+
+\noindent Our model is trained for 1000 iterations as experimentally convergence occurs within a safe margin of this bound. 
 
 \section{Results and Evaluation}
 
-How are you evaluating your model? What results do you have so far? What are your baselines? Refer to item 5. This may take around 0.5 pages.
 
-\section{Feedback and Plans}
+\noindent \textbf{Confusion Matrix: Training Set}
+\[
+\begin{array}{c|cc}
+ & \hat{y}=0 & \hat{y}=1 \\
+\hline
+y=0 & 3186~(\mathrm{TN}) & 1700~(\mathrm{FP}) \\
+y=1 & 485~(\mathrm{FN}) & 805~(\mathrm{TP})
+\end{array}
+\]
 
-Write about your plans for the remainder of the project. This should include a discussion of the feedback you received from your TA, and how you plan to improve your approach. Reflect on your implementation and areas for improvement. Refer to item 6. This may be around 0.5 pages.
+
+\noindent \textbf{Confusion Matrix: Test Set}
+\[
+\begin{array}{c|cc}
+ & \hat{y}=0 & \hat{y}=1 \\
+\hline
+y=0 & 787~(\mathrm{TN}) & 435~(\mathrm{FP}) \\
+y=1 & 110~(\mathrm{FN}) & 212~(\mathrm{TP})
+\end{array}
+\]
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{../log-regression-figures/accuracy.png}
+  \caption{Accuracy results for the Logistic Regression Model on the PROMISE dataset}
+  \label{fig:accuracy-log-promise}
+\end{figure}
+
+\begin{figure}[t]
+  \includegraphics[width=\columnwidth]{../log-regression-figures/features.png}
+  \caption{Feature Importance for the Logistic Regression Model on the PROMISE dataset}
+  \label{fig:accuracy-log-promise}
+\end{figure}
+
+
+
 
 \section{Template Notes}
 
