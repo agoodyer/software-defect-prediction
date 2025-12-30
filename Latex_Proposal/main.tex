@@ -111,7 +111,7 @@ However, investing time into ensuring these metrics are met is painstaking, and 
 
 \section{Related Work}
 
-Here, talk about the related work you encountered for your approach. Cite at least 5 references. Refer to item 2. No one has done exactly your task? Write about the most similar thing you can find. This should be around 0.25-0.5 pages.
+Research in the field of Software Defect Prediction is typically focused on maximizing the predictive performance of models through various machine learning approaches to the problem. A foundational study by Menzies et al. (2007) pioneered the use of the NASA Promise dataset, and argued that static code metrics are sufficient to build effective defect prediction models. While static metrics are widely used for defect prediction, later works have scrutinized the use of these metrics for defect prediction. Shepperd et al. (2013) criticizes the Promise dataset due to several flaws including data duplication, redundant features, and inconsistencies that hinder the validity of results. This led to the creation of cleaned versions of the dataset like $D''$ that address many of the data quality issues identified with Promise. Our researched is positioned to shift focus towards model interpretability and simplicity in our methods rather than predictive performance. Rather than exploring how to perfect a static metrics classifier, we instead focus on mapping out the limitations of these metrics while identifying a relevant subset that can be interpreted by engineers to shape their testing and coverage strategies. 
 
 \section{Dataset}
 
@@ -538,15 +538,13 @@ In conclusion, these results suggest that focusing on exhaustively satisfying st
 
 
 
-
-
 \begin{thebibliography}{20}
 
         \bibitem{GHPR}
         \textit{GHPR Dataset}. 
         2021. 
         \url{https://github.com/feiwww/GHPR_dataset} 
-        (Accessed: 2025-11-29).
+        (Accessed: 2025-11-29)
 
         \bibitem{PROMISE}
         \textit{PROMISE Dataset}.
@@ -566,6 +564,19 @@ In conclusion, these results suggest that focusing on exhaustively satisfying st
         2012.
         \url{https://ieeexplore.ieee.org/document/6035727}
         (Accessed: 2025-12-10)
+
+        \bibitem{InterpretableSDP}
+        \textit{Interpretable Software Defect Prediction from Project Effort and Static Code Metrics}
+        2024.
+        \url{https://www.researchgate.net/publication/378277393_Interpretable_Software_Defect_Prediction_from_Project_Effort_and_Static_Code_Metrics}
+        (Accessed: 2025-12-10)
+
+        \bibitem{ExplainableSMOTE}
+        \textit{Explainable Software Defects Classification Using SMOTE and Machine Learning}
+        2023. 
+        \url{https://www.researchgate.net/publication/377059452_Explainable_Software_Defects_Classification_Using_SMOTE_and_Machine_Learning}
+        (Accessed: 2025-12-10)
+
 \end{thebibliography}
 
 % Bibliography entries for the entire Anthology, followed by custom entries
